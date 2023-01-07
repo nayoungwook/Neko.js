@@ -1,0 +1,35 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neko JS Test Project</title>
+</head>
+
+<body>
+    <script src="neko.js"></script>
+    <script>
+        let app = new App();
+        let ctx = App.ctx;
+        let cns = App.canvas;
+        let timer = 0;
+
+        let object1 = new GameObject(cns.width / 2, cns.height / 2, 200, 200);
+        object1.sprite = new Sprite("hd.png");
+
+        let object2 = new GameObject(cns.width / 2 + 100, cns.height / 2, 200, 200);
+        object2.sprite = new Sprite("hd.png");
+
+        app.render = () => {
+            object1.render();
+            object2.render();
+        }
+
+        app.tick = () => {
+        }
+
+    </script>
+</body>
+
+</html>
