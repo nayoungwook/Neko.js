@@ -4,6 +4,25 @@ class Mathf {
     }
 }
 
+class Color {
+    public r: number;
+    public g: number;
+    public b: number;
+    public a: number;
+
+    constructor(r: number, g: number, b: number, a?: number) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = (a == undefined ? 1 : a);
+    }
+
+    public getString(): string {
+        return `(${this.r},${this.g},${this.b})${this.a})`;
+    }
+
+}
+
 class Vector {
 
     public x: number;
@@ -49,11 +68,14 @@ class GameObject {
     public renderWidth: number;
     public renderHeight: number;
     public sprite: Sprite;
+    public renderType: string = 'image';
+    public color: Color;
 
     constructor(x: number, y: number, width?: number, height?: number) {
         this.position = new Vector(x, y, 1);
         this.renderPosition = new Vector(0, 0, 1);
         this.anchor = new Vector(0.5, 0.5);
+        this.color = new Color(255, 40, 150, 1);
 
         this.rotation = 0;
         this.width = width != undefined ? width : 100;
@@ -92,12 +114,22 @@ class GameObject {
 
         App.ctx.translate(this.renderPosition.x, this.renderPosition.y);
         App.ctx.rotate(this.rotation + Camera.rotation);
-        if (this.sprite != null) {
-            App.ctx.drawImage(this.sprite.image, -this.renderWidth / 2, -this.renderHeight / 2, this.renderWidth, this.renderHeight);
+
+        if (this.renderType == 'image') {
+            if (this.sprite != null) {
+                App.ctx.drawImage(this.sprite.image, -this.renderWidth / 2, -this.renderHeight / 2, this.renderWidth, this.renderHeight);
+            }
+        } else if (this.renderType == 'rect') {
+            App.ctx.fillStyle = this.color.getString();
+            App.ctx.fillRect(-this.renderWidth / 2, -this.renderHeight / 2, this.renderWidth, this.renderHeight);
         }
 
         App.ctx.restore();
     }
+
+}
+
+class Renderer {
 
 }
 
