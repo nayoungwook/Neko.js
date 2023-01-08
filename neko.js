@@ -6,6 +6,18 @@ var Mathf = /** @class */ (function () {
     };
     return Mathf;
 }());
+var Color = /** @class */ (function () {
+    function Color(r, g, b, a) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = (a == undefined ? 1 : a);
+    }
+    Color.prototype.getString = function () {
+        return "(".concat(this.r, ",").concat(this.g, ",").concat(this.b, ")").concat(this.a, ")");
+    };
+    return Color;
+}());
 var Vector = /** @class */ (function () {
     function Vector(x, y, z) {
         this.x = x;
@@ -34,9 +46,11 @@ var Sprite = /** @class */ (function () {
 }());
 var GameObject = /** @class */ (function () {
     function GameObject(x, y, width, height) {
+        this.renderType = 'image';
         this.position = new Vector(x, y, 1);
         this.renderPosition = new Vector(0, 0, 1);
         this.anchor = new Vector(0.5, 0.5);
+        this.color = new Color(255, 40, 150, 1);
         this.rotation = 0;
         this.width = width != undefined ? width : 100;
         this.height = height != undefined ? height : 100;
@@ -65,12 +79,39 @@ var GameObject = /** @class */ (function () {
         App.ctx.save();
         App.ctx.translate(this.renderPosition.x, this.renderPosition.y);
         App.ctx.rotate(this.rotation + Camera.rotation);
-        if (this.sprite != null) {
-            App.ctx.drawImage(this.sprite.image, -this.renderWidth / 2, -this.renderHeight / 2, this.renderWidth, this.renderHeight);
+        if (this.renderType == 'image') {
+            if (this.sprite != null) {
+                App.ctx.drawImage(this.sprite.image, -this.renderWidth / 2, -this.renderHeight / 2, this.renderWidth, this.renderHeight);
+            }
+        }
+        else if (this.renderType == 'rect') {
+            App.ctx.fillStyle = this.color.getString();
+            App.ctx.fillRect(-this.renderWidth / 2, -this.renderHeight / 2, this.renderWidth, this.renderHeight);
         }
         App.ctx.restore();
     };
     return GameObject;
+}());
+var Renderer = /** @class */ (function () {
+    function Renderer() {
+    }
+    Renderer.image = function (sprite, x, y, width, height, z, rotation) {
+        var image = new GameObject(x, y, width, height);
+        image.position.z = (z == undefined ? 1 : z);
+        image.rotation = (rotation == undefined ? 1 : rotation);
+        image.sprite = sprite;
+        image.render();
+    };
+    Renderer.rect = function (x, y, width, height, z, rotation, color) {
+        var rect = new GameObject(x, y, width, height);
+        rect.renderType = 'rect';
+        if (color != undefined)
+            rect.color = color;
+        rect.position.z = (z == undefined ? 1 : z);
+        rect.rotation = (rotation == undefined ? 1 : rotation);
+        rect.render();
+    };
+    return Renderer;
 }());
 var App = /** @class */ (function () {
     function App() {

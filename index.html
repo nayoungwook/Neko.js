@@ -15,18 +15,12 @@
         let cns = App.canvas;
         let timer = 0;
 
-        let object1 = new GameObject(cns.width / 2, cns.height / 2, 200, 200);
-        object1.sprite = new Sprite("hd.png");
-
-        let object2 = new GameObject(cns.width / 2 + 100, cns.height / 2, 200, 200);
-        object2.sprite = new Sprite("hd.png");
-
         app.render = () => {
-            object1.render();
-            object2.render();
+            Renderer.rect(300, 300, 300, 300, 1, timer, new Color(255, 50, 150));
         }
 
         app.tick = () => {
+            timer+=0.1;
         }
 
     </script>
