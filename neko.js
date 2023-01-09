@@ -14,7 +14,7 @@ var Color = /** @class */ (function () {
         this.a = (a == undefined ? 1 : a);
     }
     Color.prototype.getString = function () {
-        return "(".concat(this.r, ",").concat(this.g, ",").concat(this.b, ")").concat(this.a, ")");
+        return "rgb(".concat(this.r, ",").concat(this.g, ",").concat(this.b, ",").concat(this.a, ")");
     };
     return Color;
 }());
@@ -25,6 +25,23 @@ var Vector = /** @class */ (function () {
         this.z = z;
     }
     return Vector;
+}());
+var Input = /** @class */ (function () {
+    function Input() {
+    }
+    Input.touchPos = new Vector(0, 0);
+    Input.touch = false;
+    return Input;
+}());
+var Scene = /** @class */ (function () {
+    function Scene() {
+        this.init();
+    }
+    Scene.prototype.init = function () { };
+    ;
+    Scene.prototype.tick = function () { };
+    Scene.prototype.render = function () { };
+    return Scene;
 }());
 var Camera = /** @class */ (function () {
     function Camera() {
@@ -47,6 +64,7 @@ var Sprite = /** @class */ (function () {
 var GameObject = /** @class */ (function () {
     function GameObject(x, y, width, height) {
         this.renderType = 'image';
+        this.textAlign = 'center';
         this.position = new Vector(x, y, 1);
         this.renderPosition = new Vector(0, 0, 1);
         this.anchor = new Vector(0.5, 0.5);
@@ -88,6 +106,11 @@ var GameObject = /** @class */ (function () {
             App.ctx.fillStyle = this.color.getString();
             App.ctx.fillRect(-this.renderWidth / 2, -this.renderHeight / 2, this.renderWidth, this.renderHeight);
         }
+        else if (this.renderType == 'text') {
+            App.ctx.fillStyle = this.color.getString();
+            App.ctx.textAlign = this.textAlign;
+            App.ctx.fillText(this.text, -this.renderWidth / 2, -this.renderHeight / 2);
+        }
         App.ctx.restore();
     };
     return GameObject;
@@ -120,7 +143,20 @@ var App = /** @class */ (function () {
         document.body.appendChild(App.canvas);
         document.body.style.margin = '0px';
         document.body.style.border = '0px';
-        this.init();
+        document.addEventListener('touchstart', function (e) {
+            Input.touchPos.x = e.touches[0].clientX;
+            Input.touchPos.y = e.touches[0].clientY;
+            Input.touch = true;
+        });
+        document.addEventListener('touchmove', function (e) {
+            Input.touchPos.x = e.touches[0].clientX;
+            Input.touchPos.y = e.touches[0].clientY;
+        });
+        document.addEventListener('touchend', function (e) {
+            Input.touchPos.x = e.touches[0].clientX;
+            Input.touchPos.y = e.touches[0].clientY;
+            Input.touch = false;
+        });
         setInterval(function () { _this._update(); }, 1000 / 60);
     }
     App.prototype._resize = function () {
@@ -129,9 +165,11 @@ var App = /** @class */ (function () {
     };
     App.prototype._update = function () {
         this._resize();
-        this.tick();
+        if (App.scene != null)
+            App.scene.tick();
         App.renderQueue = [];
-        this.render();
+        if (App.scene != null)
+            App.scene.render();
         App.renderQueue = App.renderQueue.sort(function (fir, sec) {
             return fir.position.z - sec.position.z;
         });
@@ -139,9 +177,6 @@ var App = /** @class */ (function () {
             App.renderQueue[i]._render();
         }
     };
-    App.prototype.init = function () { };
-    App.prototype.tick = function () { };
-    App.prototype.render = function () { };
     App.prototype.createCanvas = function () {
         var _canvas = document.createElement('canvas');
         _canvas.id = 'canvas';

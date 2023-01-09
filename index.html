@@ -14,13 +14,15 @@
         let ctx = App.ctx;
         let cns = App.canvas;
         let timer = 0;
+        let color = new Color(255, 90, 180);
+        let spr = new Sprite("hd.png");
 
         app.render = () => {
-            Renderer.rect(300, 300, 300, 300, 1, timer, new Color(255, 50, 150));
+            Renderer.rect(cns.width / 2 + Math.cos(timer) * 200, 300, 300, 300, 1, timer, color);
         }
 
         app.tick = () => {
-            timer+=0.1;
+            timer += 0.05;
         }
 
     </script>

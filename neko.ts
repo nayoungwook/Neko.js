@@ -18,7 +18,7 @@ class Color {
     }
 
     public getString(): string {
-        return `(${this.r},${this.g},${this.b})${this.a})`;
+        return `rgb(${this.r},${this.g},${this.b},${this.a})`;
     }
 
 }
@@ -34,6 +34,21 @@ class Vector {
         this.y = y;
         this.z = z;
     }
+}
+
+class Input {
+    public static touchPos: Vector = new Vector(0, 0);
+    public static touch: boolean = false;
+}
+
+class Scene {
+    constructor() {
+        this.init();
+    }
+
+    init() { };
+    tick() { }
+    render() { }
 }
 
 class Camera {
@@ -69,6 +84,8 @@ class GameObject {
     public renderHeight: number;
     public sprite: Sprite;
     public renderType: string = 'image';
+    public text: string;
+    public textAlign: CanvasTextAlign = 'center';
     public color: Color;
 
     constructor(x: number, y: number, width?: number, height?: number) {
@@ -122,6 +139,10 @@ class GameObject {
         } else if (this.renderType == 'rect') {
             App.ctx.fillStyle = this.color.getString();
             App.ctx.fillRect(-this.renderWidth / 2, -this.renderHeight / 2, this.renderWidth, this.renderHeight);
+        } else if (this.renderType == 'text') {
+            App.ctx.fillStyle = this.color.getString();
+            App.ctx.textAlign = this.textAlign;
+            App.ctx.fillText(this.text, - this.renderWidth / 2, -this.renderHeight / 2);
         }
 
         App.ctx.restore();
@@ -149,10 +170,10 @@ class Renderer {
 }
 
 class App {
-
     public static canvas: HTMLCanvasElement;
     public static ctx: CanvasRenderingContext2D;
     public static renderQueue: Array<GameObject>;
+    public static scene: Scene;
 
     constructor() {
         App.canvas = this.createCanvas();
@@ -160,7 +181,23 @@ class App {
         document.body.style.margin = '0px';
         document.body.style.border = '0px';
 
-        this.init();
+        document.addEventListener('touchstart', (e) => {
+            Input.touchPos.x = e.touches[0].clientX;
+            Input.touchPos.y = e.touches[0].clientY;
+            Input.touch = true;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            Input.touchPos.x = e.touches[0].clientX;
+            Input.touchPos.y = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            Input.touchPos.x = e.touches[0].clientX;
+            Input.touchPos.y = e.touches[0].clientY;
+            Input.touch = false;
+        });
+
         setInterval(() => { this._update(); }, 1000 / 60);
     }
 
@@ -171,10 +208,12 @@ class App {
 
     private _update(): void {
         this._resize();
-        this.tick();
+        if (App.scene != null)
+            App.scene.tick();
 
         App.renderQueue = [];
-        this.render();
+        if (App.scene != null)
+            App.scene.render();
 
         App.renderQueue = App.renderQueue.sort(function (fir, sec) {
             return fir.position.z - sec.position.z;
@@ -184,10 +223,6 @@ class App {
             App.renderQueue[i]._render();
         }
     }
-
-    public init(): void { }
-    public tick(): void { }
-    public render(): void { }
 
     private createCanvas(): HTMLCanvasElement {
         let _canvas = document.createElement('canvas');
