@@ -154,7 +154,7 @@ class Renderer {
     public static image(sprite: Sprite, x: number, y: number, width: number, height: number, z?: number, rotation?: number) {
         let image = new GameObject(x, y, width, height);
         image.position.z = (z == undefined ? 1 : z);
-        image.rotation = (rotation == undefined ? 1 : rotation);
+        image.rotation = (rotation == undefined ? 0 : rotation);
         image.sprite = sprite;
         image.render();
     }
@@ -164,7 +164,7 @@ class Renderer {
         if (color != undefined)
             rect.color = color;
         rect.position.z = (z == undefined ? 1 : z);
-        rect.rotation = (rotation == undefined ? 1 : rotation);
+        rect.rotation = (rotation == undefined ? 0 : rotation);
         rect.render();
     }
 }
@@ -193,8 +193,6 @@ class App {
         });
 
         document.addEventListener('touchend', (e) => {
-            Input.touchPos.x = e.touches[0].clientX;
-            Input.touchPos.y = e.touches[0].clientY;
             Input.touch = false;
         });
 
@@ -230,6 +228,7 @@ class App {
         _canvas.width = 600;
         _canvas.height = 600;
         App.ctx = _canvas.getContext('2d')!;
+        App.ctx.imageSmoothingEnabled = true;
         return _canvas;
     }
 }

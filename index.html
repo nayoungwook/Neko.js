@@ -5,25 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neko JS Test Project</title>
+    <style>
+        body {
+            overflow: hidden;
+        }
+
+        body * {
+            touch-action: none;
+        }
+    </style>
 </head>
 
 <body>
     <script src="neko.js"></script>
     <script>
-        let app = new App();
-        let ctx = App.ctx;
-        let cns = App.canvas;
-        let timer = 0;
-        let color = new Color(255, 90, 180);
-        let spr = new Sprite("hd.png");
-
-        app.render = () => {
-            Renderer.rect(cns.width / 2 + Math.cos(timer) * 200, 300, 300, 300, 1, timer, color);
-        }
-
-        app.tick = () => {
-            timer += 0.05;
-        }
 
     </script>
 </body>

@@ -121,7 +121,7 @@ var Renderer = /** @class */ (function () {
     Renderer.image = function (sprite, x, y, width, height, z, rotation) {
         var image = new GameObject(x, y, width, height);
         image.position.z = (z == undefined ? 1 : z);
-        image.rotation = (rotation == undefined ? 1 : rotation);
+        image.rotation = (rotation == undefined ? 0 : rotation);
         image.sprite = sprite;
         image.render();
     };
@@ -131,7 +131,7 @@ var Renderer = /** @class */ (function () {
         if (color != undefined)
             rect.color = color;
         rect.position.z = (z == undefined ? 1 : z);
-        rect.rotation = (rotation == undefined ? 1 : rotation);
+        rect.rotation = (rotation == undefined ? 0 : rotation);
         rect.render();
     };
     return Renderer;
@@ -153,8 +153,6 @@ var App = /** @class */ (function () {
             Input.touchPos.y = e.touches[0].clientY;
         });
         document.addEventListener('touchend', function (e) {
-            Input.touchPos.x = e.touches[0].clientX;
-            Input.touchPos.y = e.touches[0].clientY;
             Input.touch = false;
         });
         setInterval(function () { _this._update(); }, 1000 / 60);
@@ -183,6 +181,7 @@ var App = /** @class */ (function () {
         _canvas.width = 600;
         _canvas.height = 600;
         App.ctx = _canvas.getContext('2d');
+        App.ctx.imageSmoothingEnabled = true;
         return _canvas;
     };
     return App;
