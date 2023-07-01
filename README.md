@@ -24,7 +24,7 @@ game object
 vector
 
     let vec = new Vector();
-    vec.position.x += 1;
+    vec.x += 1;
 
 Camera
 
